@@ -1,0 +1,1 @@
+cuobjdump -sass pipeline_latency > sass
