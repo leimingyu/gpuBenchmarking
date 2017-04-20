@@ -35,49 +35,65 @@ int main(int argc, char **argv) {
 
 	cudaSetDevice(devid);
 
-	/*
-	   uint_test(UINTADD);
-	   uint_test(UINTSUB);
-	   uint_test(UINTMAD);
-	   uint_test(UINTMUL);
-	   uint_test(UINTDIV);
-	   uint_test(UINTREM);
-	   uint_test(UINTMIN);
-	   uint_test(UINTMAX);
-	   uint_test(UINTAND);
-	   uint_test(UINTOR);
-	   uint_test(UINTXOR);
-	   uint_test(UINTSHL);
-	   uint_test(UINTSHR);
-	   uint_test(UINTUMUL24);
-	   uint_test(UINTUMULHI);
-	   uint_test(UINTUSAD);
+	cudaDeviceProp prop;                                                        
+	cudaGetDeviceProperties(&prop, devid);                                      
+	printf("\n---------------------------------------------"
+		   "\nRun microbenchmarks on : %s"
+		   "\n---------------------------------------------\n\n", prop.name);  
 
-	   int_test(INTADD);
-	   int_test(INTSUB);
-	   int_test(INTMAD);
-	   int_test(INTMUL);
-	   int_test(INTDIV);
-	   int_test(INTREM);
-	   int_test(INTMIN);
-	   int_test(INTMAX);
-	   int_test(INTMUL24);
-	   int_test(INTMULHI);
-	   int_test(INTSAD);
+	//----------------------------------------//
+	// integer 
+	//----------------------------------------//
+	int_test(INTADD);
+	int_test(INTSUB);
+	int_test(INTMIN);
+	int_test(INTMAX);
+	int_test(INTSAD);
+	int_test(INTMUL);
+	int_test(INTMAD); // mul + add
+	int_test(INTSET);
+	int_test(INTSHL);
+	int_test(INTSHR);
 
-*/
+	// todo
+	//int_test(INTDIV);
+	//int_test(INTREM);
+	//int_test(INTMUL24);
+	//int_test(INTMULHI);
+
+	//----------------------------------------//
+	// unsigned integer 
+	//----------------------------------------//
+	//uint_test(UINTADD);
+	//uint_test(UINTSUB);
+	//uint_test(UINTMAD);
+	//uint_test(UINTMUL);
+	//uint_test(UINTDIV);
+	//uint_test(UINTREM);
+	//uint_test(UINTMIN);
+	//uint_test(UINTMAX);
+	//uint_test(UINTAND);
+	//uint_test(UINTOR);
+	//uint_test(UINTXOR);
+	//uint_test(UINTSHL);
+	//uint_test(UINTSHR);
+	//uint_test(UINTUMUL24);
+	//uint_test(UINTUMULHI);
+	//uint_test(UINTUSAD);
+
 
 	//----------------------------------------//
 	// float 
 	//----------------------------------------//
-	float_test(FLOATADD);
-	float_test(FLOATMUL);
-	float_test(FLOATMIN);
-	float_test(FLOATMAX);
-	// page 72, https://www.nvidia.com/content/CUDA-ptx_isa_1.4.pdf
-	float_test(FLOATCMP); 	// fset
-	float_test(FLOATFMA);
+	//float_test(FLOATADD);
+	//float_test(FLOATMUL);
+	//float_test(FLOATMIN);
+	//float_test(FLOATMAX);
+	//// page 72, https://www.nvidia.com/content/CUDA-ptx_isa_1.4.pdf
+	//float_test(FLOATCMP); 	// fset
+	//float_test(FLOATFMA);
 
+	// todo
 	//float_test(FLOATSUB);
 	//float_test(FLOATMAD);
 	//float_test(FLOATDIV);
@@ -97,6 +113,7 @@ int main(int argc, char **argv) {
 	//double_test(DOUBLEMAX);
 	//double_test(DOUBLEFMA);
 
+	// todo
 	//double_test(DOUBLESUB);
 	//double_test(DOUBLEMAD);
 	//double_test(DOUBLEMUL);
@@ -254,26 +271,39 @@ void int_test(INT_OP OP_)
 	} else if (OP_ == INTSAD) {
 		test_name = "INT SAD";
 		int_sad <<< 1, 1 >>> (d_a, a, b, d_start, d_end);
+	} else if (OP_ == INTSHL) {
+		test_name = "INT SHL";
+		int_shl<<< 1, 1 >>> (d_a, a, b, d_start, d_end);
+	} else if (OP_ == INTSHR) {
+		test_name = "INT SHR";
+		int_shr<<< 1, 1 >>> (d_a, a, b, d_start, d_end);
+	} else if (OP_ == INTSET) {
+		test_name = "INT SET (set equal)";
+		int_set<<< 1, 1 >>> (d_a, a, b, d_start, d_end);
 	}
-
-
 
 	cudaDeviceSynchronize();
 
-	//   uint diff1 = (d_end[1] - d_start[1]) - (d_end[0] - d_start[0]);
-	//   uint diff2 = (d_end[2] - d_start[2]) - (d_end[1] - d_start[1]);
+	uint bar1 = d_end[0] - d_start[0];  // 3 mov : including store the clock val
+	uint bar2 = d_end[1] - d_start[1];  // 2 mov + inst + 2 mov
+	uint bar3 = d_end[2] - d_start[2];  // 3 mov
 
-	//   float d1 = (float)diff1 / 64.f;
-	//   float d2 = (float)diff2 / 128.f;
+	printf("\n%s\n", test_name.c_str());
+	printf("bar1 : %u \t bar2 :%u \t bar3: %u\n", bar1, bar2, bar3);
 
-	//   printf("%s : %.3f - %.3f (clk/warp)\n", test_name.c_str(), FMIN(d1,d2), FMAX(d1,d2));
+	// verify there is 3 mov = 3 * 15 clk / mov
+	assert(bar1 == 45);
+	assert(bar3 == 45);
+	uint mov_clk = bar1 / 3;
 
+	if (OP_ == INTMAD) {
+		printf("=>Warning: int_mad (2mov + imul + iadd + 3mov).\n");
+		printf("%s: %u (clks)\n", test_name.c_str() ,bar2 - 5 * mov_clk);
 
-	uint first_cycles = d_end[0] - d_start[0];
-	uint second_cycles = d_end[1] - d_start[1];
-	uint inst_cyc = second_cycles - first_cycles;
+	} else {
+		printf("%s: %u (clks)\n", test_name.c_str() ,bar2 - 4 * mov_clk);
+	}
 
-	printf("%s : %u (clk/warp)\n", test_name.c_str(), inst_cyc);
 
 	cudaFree(d_a);
 	cudaFree(d_start);
@@ -356,13 +386,13 @@ void float_test(FLOAT_OP OP_)
 	uint bar2 = d_end[1] - d_start[1]; // 2 mov + inst + 2 mov
 	uint bar3 = d_end[2] - d_start[2]; // 3 mov
 
+	printf("\n%s\n", test_name.c_str());
+	printf("bar1 : %u \t bar2 :%u \t bar3: %u\n", bar1, bar2, bar3);
+
 	// verify there is 3 mov = 3 * 15 clk / mov
 	assert(bar1 == 45);
 	assert(bar3 == 45);
 	uint mov_clk = bar1 / 3;
-
-	printf("\n%s\n", test_name.c_str());
-	printf("bar1 : %u \t bar2 :%u \t bar3: %u\n", bar1, bar2, bar3);
 
 	if (OP_ == FLOATCMP) {
 		printf("=>Warning: there are FSET and I2F (consider same cycles) for float_cmp.\n");
@@ -441,13 +471,13 @@ void double_test(DOUBLE_OP OP_)
 	uint bar2 = d_end[1] - d_start[1]; // 2 mov + inst + 3 mov
 	uint bar3 = d_end[2] - d_start[2]; // 3 mov
 
+	printf("\n%s\n", test_name.c_str());
+	printf("bar1 : %u \t bar2 :%u \t bar3: %u\n", bar1, bar2, bar3);
+
 	// verify there is 3 mov = 3 * 15 clk / mov
 	assert(bar1 == 45);
 	assert(bar3 == 45);
 	uint mov_clk = bar1 / 3;
-
-	printf("\n%s\n", test_name.c_str());
-	printf("bar1 : %u \t bar2 :%u \t bar3: %u\n", bar1, bar2, bar3);
 
 	if (OP_ == DOUBLEFMA) {
 		printf("=>Warning: there are 2 more mov for double_fma.\n");
@@ -465,4 +495,3 @@ void double_test(DOUBLE_OP OP_)
 
 	cudaDeviceReset();
 }
-
