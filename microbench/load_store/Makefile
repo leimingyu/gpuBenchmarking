@@ -14,6 +14,7 @@ NVCC_FLAGS   :=
 NVCC_FLAGS   += -Xcicc -O0 -Xptxas -O0 
 #NVCC_FLAGS   += -O0
 NVCC_FLAGS   += -m${OS_TYPE}
+#NVCC_FLAGS   += -lineinfo 
 
 # Directories for Header Files 
 NV_INC = -I$(CUDA_DIR)/include/ -I$(CUDA_DIR)/samples/common/inc

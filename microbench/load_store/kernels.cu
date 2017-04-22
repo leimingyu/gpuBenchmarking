@@ -94,3 +94,104 @@ __global__ void kernel_load_shared(float *my_array, uint *start_t, uint *end_t,
 
 	my_array[0] = (float)k;
 }
+
+//-----------------------------------------------------------------------------
+// https://devtalk.nvidia.com/default/topic/545309/ptx-code-quot-st-quot-/
+//-----------------------------------------------------------------------------
+__global__ void kernel_store_global(float *my_array, uint *start_t, uint *end_t, 
+		int arraylen, float a, float b)
+{
+	unsigned int start_time1;                                                   
+	unsigned int start_time2;                                                   
+	unsigned int start_time3;                                                   
+
+	unsigned int end_time1;                                                     
+	unsigned int end_time2;                                                     
+	unsigned int end_time3;                                                     
+
+	float k =  a + b;
+
+	__syncthreads();                                                            
+
+	start_time1 = clock();                                                      
+	end_time1 = clock();                                                        
+
+	__syncthreads();                                                            
+
+	start_time2 = clock();                                                      
+	asm volatile (
+			"st.global.f32  [%0], %1;\n\t" :: "l"(&my_array[0]) , "f"(k)
+			);
+
+	//asm volatile (
+	//		"st.f32  [%0], %1;\n\t" :: "l"(&my_array[0]) , "f"(k)
+	//		);
+	end_time2 = clock();                                                        
+
+	__syncthreads();                                                            
+
+	start_time3 = clock();                                                      
+	end_time3 = clock();                                                        
+
+	start_t[0] = start_time1;                                                   
+	start_t[1] = start_time2;                                                   
+	start_t[2] = start_time3;                                                   
+
+	end_t[0] = end_time1;                                                       
+	end_t[1] = end_time2;                                                       
+	end_t[2] = end_time3;                                                       
+
+	my_array[0] += (float)k;
+}
+
+
+//-----------------------------------------------------------------------------
+// st.shared.f32 : doesn't work, bus error
+//-----------------------------------------------------------------------------
+__global__ void kernel_store_shared(float *my_array, uint *start_t, uint *end_t, 
+		int arraylen, float a, float b)
+{
+	unsigned int start_time1;                                                   
+	unsigned int start_time2;                                                   
+	unsigned int start_time3;                                                   
+
+	unsigned int end_time1;                                                     
+	unsigned int end_time2;                                                     
+	unsigned int end_time3;                                                     
+
+	float k =  a + b;
+
+	__shared__ float sm[1];
+
+	__syncthreads();                                                            
+
+	start_time1 = clock();                                                      
+	end_time1 = clock();                                                        
+
+	__syncthreads();                                                            
+
+	start_time2 = clock();                                                      
+	//asm volatile (
+	//		"st.shared.f32  [%0], %1;\n\t" :: "l"(&sm[0]) , "f"(k)
+	//		);
+	asm volatile (
+			"st.f32  [%0], %1;\n\t" :: "l"(&sm[0]) , "f"(k)
+			);
+
+	end_time2 = clock();                                                        
+
+	__syncthreads();                                                            
+
+	start_time3 = clock();                                                      
+	end_time3 = clock();                                                        
+
+	start_t[0] = start_time1;                                                   
+	start_t[1] = start_time2;                                                   
+	start_t[2] = start_time3;                                                   
+
+	end_t[0] = end_time1;                                                       
+	end_t[1] = end_time2;                                                       
+	end_t[2] = end_time3;                                                       
+
+	my_array[0] += (float)k;
+}
