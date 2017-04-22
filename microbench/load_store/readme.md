@@ -1,3 +1,10 @@
+# Results 
+### GTX 950 (CUDA 8)
+* global_load  650 (cycles)
+* shared_load  23 (cycles)
+
+noted: load directly to register
+
 ### load from global
 ```
 CS2R R9, SR_CLOCKLO;           
