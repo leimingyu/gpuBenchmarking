@@ -1,7 +1,7 @@
 # Results 
 ### GTX 950 (CUDA 8)
 * global_load  650 (cycles)
-* global_store  323 (cycles)
+* global_store  15 (cycles)
 * shared_load  23 (cycles)
 
 noted: load directly to register
