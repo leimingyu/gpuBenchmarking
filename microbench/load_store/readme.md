@@ -1,6 +1,7 @@
 # Results 
 ### GTX 950 (CUDA 8)
 * global_load  650 (cycles)
+* global_store  323 (cycles)
 * shared_load  23 (cycles)
 
 noted: load directly to register
@@ -109,4 +110,17 @@ For a benchmarched sass as below
 * (1 mov for end clock)
 
 
+### global store
+```
+        /*01a8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+        /*01b0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
+        /*01b8*/                   MOV R12, R9;                     /* 0x5c9807800097000c */
+                                                                    /* 0x0067bc03fde01fef */
+        /*01c8*/                   MOV R2, R2;                      /* 0x5c98078000270002 */
+        /*01d0*/                   MOV R3, R3;                      /* 0x5c98078000370003 */
+        /*01d8*/                   STG.E [R2], R6;                  /* 0xeedc200000070206 */
+                                                                    /* 0x007fbc03fde01fef */
+        /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+        /*01f0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
+```
 
