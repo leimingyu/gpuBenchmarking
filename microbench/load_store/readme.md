@@ -125,6 +125,8 @@ For a benchmarched sass as below
 ```
 
 ### shared store
+st.shared.f32 doesn't work, use st.f32 instead!
+
 ```
         /*01a8*/                   CS2R R10, SR_CLOCKLO;            /* 0x50c800000507000a */
         /*01b0*/                   MOV R10, R10;                    /* 0x5c98078000a7000a */
@@ -149,11 +151,16 @@ For a benchmarched sass as below
         /*0248*/                   MOV R11, R11;                    /* 0x5c98078000b7000b */
         /*0250*/                   MOV R10, R10;                    /* 0x5c98078000a7000a */
         /*0258*/                   MOV R11, R11;                    /* 0x5c98078000b7000b */
-                                                                    /* 0x0067bc03fde01fef */
-        /*0268*/                   MOV R13, R10;                    /* 0x5c98078000a7000d */
-        /*0270*/                   MOV R10, R11;                    /* 0x5c98078000b7000a */
-        /*0278*/                   STS [R13], R7;                   /* 0xef5c000000070d07 */
                                                                     /* 0x007fbc03fde01fef */
-        /*0288*/                   CS2R R10, SR_CLOCKLO;            /* 0x50c800000507000a */
+        /*0268*/                   MOV R13, R10;                    /* 0x5c98078000a7000d */
+        /*0270*/                   MOV R11, R11;                    /* 0x5c98078000b7000b */
+        /*0278*/                   LEA R10.CC, R13, RZ;             /* 0x5bd780000ff70d0a */
+                                                                    /* 0x007fbc03fde01fef */
+        /*0288*/                   LEA.HI.X P0, R11, R13, RZ, R11;  /* 0x5bd805c00ff70d0b */
+        /*0290*/                   MOV R10, R10;                    /* 0x5c98078000a7000a */
+        /*0298*/                   MOV R11, R11;                    /* 0x5c98078000b7000b */
+                                                                    /* 0x007fbc03fde019ef */
+        /*02a8*/                   ST.E [R10], R7, P0;              /* 0xa090000000070a07 */
+        /*02b0*/                   CS2R R10, SR_CLOCKLO;            /* 0x50c800000507000a */
 
 ```
