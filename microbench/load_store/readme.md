@@ -112,6 +112,7 @@ For a benchmarched sass as below
 
 
 ### global store
+using st.global.f32
 ```
         /*01a8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
         /*01b0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
@@ -124,6 +125,29 @@ For a benchmarched sass as below
         /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
         /*01f0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
 ```
+
+us st.f32
+```
+        /*01a8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+        /*01b0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
+        /*01b8*/                   MOV R12, R9;                     /* 0x5c9807800097000c */
+                                                                    /* 0x007fbc03fde01fef */
+        /*01c8*/                   MOV R2, R2;                      /* 0x5c98078000270002 */
+        /*01d0*/                   MOV R3, R3;                      /* 0x5c98078000370003 */
+        /*01d8*/                   MOV R10, R2;                     /* 0x5c9807800027000a */
+                                                                    /* 0x007fbc03fde01fef */
+        /*01e8*/                   MOV R11, R3;                     /* 0x5c9807800037000b */
+        /*01f0*/                   LEA R9.CC, R10, RZ;              /* 0x5bd780000ff70a09 */
+        /*01f8*/                   LEA.HI.X P0, R10, R10, RZ, R11;  /* 0x5bd805c00ff70a0a */
+                                                                    /* 0x0067bc03fde01fef */
+        /*0208*/                   MOV R11, R10;                    /* 0x5c98078000a7000b */
+        /*0210*/                   MOV R10, R9;                     /* 0x5c9807800097000a */
+        /*0218*/                   ST.E [R10], R6, P0;              /* 0xa090000000070a06 */
+                                                                    /* 0x007fbc03fde01fef */
+        /*0228*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+
+```
+
 
 ### shared store
 st.shared.f32 doesn't work, use st.f32 instead!
