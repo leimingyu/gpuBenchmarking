@@ -2,6 +2,29 @@
 * cuda 8.0 (driver/runtime)
 * maxwell gpu
 
+### Some Results for GTX 950 
+
+| Inst. Type | Opcode | Clocks | Inst. Type | Opcode | Clocks |
+|------------|--------|--------|------------|--------|--------|
+| Integer | IADD | 15 | Single | FADD | 15 |
+|  | ISUB | 15 |  | FMUL | 15 |
+|  | IMNMX | 15 |  | FMNMX | 15 |
+|  | ISAD | 15 |  | FSET | 15 |
+|  | IMUL | 86 |  | FFMA | 15 |
+|  | IMAD | 101 | Double | DADD | 48 |
+|  | ISET | 15 |  | DMUL | 48 |
+|  | SHL | 15 |  | DMNMX | 48 |
+|  | SHR | 15 |  | DFMA | 51 |
+
+| Memory Access | SASS | Clocks |
+|---------------|-------|--------|
+| Global Load | LD.E | 650 |
+| Global Store | STG.E | 15 |
+| Shared Load | LD.E | 23 |
+| Shared Store | ST.E | 15 |
+
+
+
 ### Doc
 * sass instruction list [cuda doc] (http://docs.nvidia.com/cuda/cuda-binary-utilities/index.html#axzz4enGhDdde)
 
