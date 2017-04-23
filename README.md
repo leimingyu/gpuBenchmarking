@@ -1,6 +1,6 @@
 # gpuBenchmarking
 
-### Some Results
+### Some Results for GTX 950 (maxwell)
 
 | Inst. Type | Opcode | Clocks | Inst. Type | Opcode | Clocks |
 |------------|--------|--------|------------|--------|--------|
