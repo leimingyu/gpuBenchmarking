@@ -3,7 +3,7 @@
 * maxwell gpu
 
 ### Doc
-* sass instruction list [cuda doc] (http://docs.nvidia.com/cuda/cuda-binary-utilities/index.html#axzz4enGhDdde)
+* sass instruction list [cuda doc](http://docs.nvidia.com/cuda/cuda-binary-utilities/index.html#instruction-set-ref)
 
 ### Some Results for GTX 950 
 
