@@ -2,6 +2,9 @@
 * cuda 8.0 (driver/runtime)
 * maxwell gpu
 
+### Doc
+* sass instruction list [cuda doc] (http://docs.nvidia.com/cuda/cuda-binary-utilities/index.html#axzz4enGhDdde)
+
 ### Some Results for GTX 950 
 
 | Inst. Type | Opcode | Clocks | Inst. Type | Opcode | Clocks |
@@ -24,7 +27,4 @@
 | Shared Store | ST.E | 15 |
 
 
-
-### Doc
-* sass instruction list [cuda doc] (http://docs.nvidia.com/cuda/cuda-binary-utilities/index.html#axzz4enGhDdde)
 
