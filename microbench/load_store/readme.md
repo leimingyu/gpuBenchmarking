@@ -4,7 +4,7 @@
 * global_store  64 (cycles)
 * shared_load  71 (cycles)
 * shared_store  64 (cycles)
-* constant memory load  850 (cycles)
+* constant memory load  799 (cycles)
 * local memory load  360 (cycles)
 
 noted: load directly to register
@@ -177,52 +177,63 @@ For a benchmarched sass as below
 ```
 
 
-### Constant Memory 
+### Constant Memory (Read / Load)
 
 ```
-        /*0190*/                   CS2R R9, SR_CLOCKLO;               /* 0x50c8000005070009 */
-        /*0198*/                   MOV R9, R9;                        /* 0x5c98078000970009 */
-                                                                      /* 0x007fbc0321e01fef */
-        /*01a8*/                   MOV R9, R9;                        /* 0x5c98078000970009 */
-        /*01b0*/                   S2R R10, SR_TID.X;                 /* 0xf0c800000217000a */
-        /*01b8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
-                                                                      /* 0x007fbc0321e0190f */
-        /*01c8*/                   IMUL32I.U32.U32 R11, R10, 0x4;     /* 0x1f00000000470a0b */
-        /*01d0*/                   IMUL32I.U32.U32.HI R10, R10, 0x4;  /* 0x1f20000000470a0a */
-        /*01d8*/                   MOV R13, R11;                      /* 0x5c98078000b7000d */
-                                                                      /* 0x007fbc0321e01fef */
-        /*01e8*/                   MOV R14, R10;                      /* 0x5c98078000a7000e */
-        /*01f0*/                   I2I.U32.U32 R10, RZ;               /* 0x5ce000000ff70a0a */
+      /*0150*/                   CS2R R6, SR_CLOCKLO;               /* 0x50c8000005070006 */
+        /*0158*/                   MOV R6, R6;                        /* 0x5c98078000670006 */
+                                                                      /* 0x007fbc03fde01fef */
+        /*0168*/                   MOV R9, R6;                        /* 0x5c98078000670009 */
+        /*0170*/                   MOV R6, R4;                        /* 0x5c98078000470006 */
+        /*0178*/                   MOV R7, R5;                        /* 0x5c98078000570007 */
+                                                                      /* 0x00643c03fde01fef */
+        /*0188*/                   MOV R4, R10;                       /* 0x5c98078000a70004 */
+        /*0190*/                   MOV R5, R11;                       /* 0x5c98078000b70005 */
+        /*0198*/                   S2R R10, SR_TID.X;                 /* 0xf0c800000217000a */
+                                                                      /* 0x00643c0321e01fef */
+        /*01a8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*01b0*/                   IMUL32I.U32.U32 R11, R10, 0x4;     /* 0x1f00000000470a0b */
+        /*01b8*/                   IMUL32I.U32.U32.HI R10, R10, 0x4;  /* 0x1f20000000470a0a */
+                                                                      /* 0x00643c03fde01fef */
+        /*01c8*/                   MOV R13, R11;                      /* 0x5c98078000b7000d */
+        /*01d0*/                   MOV R14, R10;                      /* 0x5c98078000a7000e */
+        /*01d8*/                   I2I.U32.U32 R10, RZ;               /* 0x5ce000000ff70a0a */
+                                                                      /* 0x007fbc03fde01fef */
+        /*01e8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*01f0*/                   MOV R11, RZ;                       /* 0x5c9807800ff7000b */
         /*01f8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
                                                                       /* 0x007fbc03fde01fef */
-        /*0208*/                   MOV R11, RZ;                       /* 0x5c9807800ff7000b */
-        /*0210*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*0208*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
+        /*0210*/                   MOV R12, R10;                      /* 0x5c98078000a7000c */
         /*0218*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
                                                                       /* 0x007fbc03fde01fef */
-        /*0228*/                   MOV R12, R10;                      /* 0x5c98078000a7000c */
-        /*0230*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
-        /*0238*/                   IADD R10.CC, R12, R13;             /* 0x5c10800000d70c0a */
+        /*0228*/                   IADD R10.CC, R12, R13;             /* 0x5c10800000d70c0a */
+        /*0230*/                   IADD.X R11, R11, R14;              /* 0x5c10080000e70b0b */
+        /*0238*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
                                                                       /* 0x007fbc03fde01fef */
-        /*0248*/                   IADD.X R11, R11, R14;              /* 0x5c10080000e70b0b */
+        /*0248*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
         /*0250*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
         /*0258*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
+                                                                      /* 0x00643c03fde01fef */
+        /*0268*/                   MOV R12, R10;                      /* 0x5c98078000a7000c */
+        /*0270*/                   MOV R10, R11;                      /* 0x5c98078000b7000a */
+        /*0278*/                   LDC R10, c[0x3][R12];              /* 0xef94003000070c0a */
                                                                       /* 0x007fbc03fde01fef */
-        /*0268*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
-        /*0270*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
-        /*0278*/                   MOV R12, R10;                      /* 0x5c98078000a7000c */
-                                                                      /* 0x007fbc0321e01fef */
-        /*0288*/                   MOV R10, R11;                      /* 0x5c98078000b7000a */
-        /*0290*/                   LDC R10, c[0x3][R12];              /* 0xef94003000070c0a */
-        /*0298*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*0288*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*0290*/                   MOV R6, R6;                        /* 0x5c98078000670006 */
+        /*0298*/                   MOV R7, R7;                        /* 0x5c98078000770007 */
                                                                       /* 0x007fbc03fde01fef */
-        /*02a8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
-        /*02b0*/                   CS2R R11, SR_CLOCKLO;              /* 0x50c800000507000b */
-
+        /*02a8*/                   MOV R4, R4;                        /* 0x5c98078000470004 */
+        /*02b0*/                   MOV R5, R5;                        /* 0x5c98078000570005 */
+        /*02b8*/                   MOV R11, R4;                       /* 0x5c9807800047000b */
+                                                                      /* 0x007fbc03fde01fef */
+        /*02c8*/                   MOV R16, R5;                       /* 0x5c98078000570010 */
+        /*02d0*/                   MOV R4, R10;                       /* 0x5c98078000a70004 */
+        /*02d8*/                   CS2R R5, SR_CLOCKLO;               /* 0x50c8000005070005 */
 ```
 
-2mov(start clock) + (23 inst = 2 imul + 21 others) + ldc + 1mov(end clock) 
 
-
+2mov (start clock) + 34 instructions (ldc  + 2 IADD + 2 imul + 29 others)+ 1mov(end clock)
 
 ### Load from Local Memory
 ```
