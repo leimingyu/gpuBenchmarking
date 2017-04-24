@@ -25,6 +25,6 @@
 | Global Store | STG.E | 64 |
 | Shared Load | LDS | 71 |
 | Shared Store | STS | 64 |
-| Constant Load | LDC | 850 |
+| Constant Load | LDC | 799 |
 | Local Load | LDL | 360 |
 
