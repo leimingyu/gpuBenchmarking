@@ -96,7 +96,7 @@ For a benchmarched sass as below
 ```
 
 * (2 mov for start clock)
-* 22 (s2r/imull32i/mov/iadd) + lds.u 
+* 22 (s2r/imull32i/mov/iadd) + lds.u.32 = 2 imul + lds.u.32 + 20 other inst
 * (1 mov for end clock)
 
 
