@@ -26,5 +26,5 @@
 | Shared Load | LDS | 71 |
 | Shared Store | STS | 64 |
 | Constant Load | LDC | 850 |
-| Local Load | LDL | 405 |
+| Local Load | LDL | 360 |
 
