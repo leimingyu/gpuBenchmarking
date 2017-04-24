@@ -3,7 +3,7 @@
 * global_load  650 (cycles)
 * global_store  15 (cycles)
 * shared_load  71 (cycles)
-* shared_store  15 (cycles)
+* shared_store  64 (cycles)
 
 noted: load directly to register
 
