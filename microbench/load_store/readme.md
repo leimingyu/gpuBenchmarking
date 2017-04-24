@@ -220,3 +220,23 @@ For a benchmarched sass as below
 ```
 
 2mov(start clock) + (23 inst = 2 imul + 21 others) + ldc + 1mov(end clock) 
+
+
+
+### Load from Local Memory
+```
+        /*0370*/                   CS2R R10, SR_CLOCKLO;                 /* 0x50c800000507000a */
+        /*0378*/                   MOV R10, R10;                         /* 0x5c98078000a7000a */
+                                                                         /* 0x007fbc03fde01fef */
+        /*0388*/                   MOV R12, R10;                         /* 0x5c98078000a7000c */
+        /*0390*/                   MOV R8, R8;                           /* 0x5c98078000870008 */
+        /*0398*/                   MOV R9, R9;                           /* 0x5c98078000970009 */
+                                                                         /* 0x00643c03fde01fef */
+        /*03a8*/                   MOV R10, R8;                          /* 0x5c9807800087000a */
+        /*03b0*/                   MOV R8, R9;                           /* 0x5c98078000970008 */
+        /*03b8*/                   LDL R8, [R10];                        /* 0xef44000000070a08 */
+                                                                         /* 0x007fbc03fde01fef */
+        /*03c8*/                   FADD R8, R8, RZ;                      /* 0x5c5800000ff70808 */
+        /*03d0*/                   MOV R8, R8;                           /* 0x5c98078000870008 */
+        /*03d8*/                   CS2R R9, SR_CLOCKLO;                  /* 0x50c8000005070009 */
+```
