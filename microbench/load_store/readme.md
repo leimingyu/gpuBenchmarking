@@ -5,6 +5,7 @@
 * shared_load  71 (cycles)
 * shared_store  64 (cycles)
 * constant memory load  850 (cycles)
+* local memory load  405 (cycles)
 
 noted: load directly to register
 
