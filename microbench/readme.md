@@ -24,7 +24,7 @@
 | Global Load | LD.E | 650 |
 | Global Store | STG.E | 15 |
 | Shared Load | LDS | 71 |
-| Shared Store | ST.E | 15 |
+| Shared Store | STS | 64 |
 
 
 
