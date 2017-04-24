@@ -46,7 +46,9 @@ __global__ void kernel_load_global(float *my_array, uint *start_t, uint *end_t,
 	my_array[0] = (float)k;
 }
 
-
+//-----------------------------------------------------------------------------
+//	ld.shared.f32   %f8, [%rd6];
+//-----------------------------------------------------------------------------
 __global__ void kernel_load_shared(float *my_array, uint *start_t, uint *end_t, 
 		int arraylen, float a, float b)
 {
@@ -66,7 +68,7 @@ __global__ void kernel_load_shared(float *my_array, uint *start_t, uint *end_t,
 	sm[0] = my_array[0];
 	__syncthreads();
 
-	float *ptr_sm = &sm[0]; // ptr_global
+	//float *ptr_sm = &sm[0]; // ptr_global
 
 	start_time1 = clock();                                                      
 	end_time1 = clock();                                                        
@@ -74,9 +76,18 @@ __global__ void kernel_load_shared(float *my_array, uint *start_t, uint *end_t,
 	__syncthreads();                                                            
 
 	start_time2 = clock();                                                      
-	asm volatile (                                                              
-			"ld.f32 %0, [%1];\n\t" : "=f"(k) : "l"(ptr_sm)
-			);                                                                  
+	//asm volatile (                                                              
+	//		"ld.f32 %0, [%1];\n\t" : "=f"(k) : "l"(ptr_sm)
+	//		);                                                                  
+
+	//asm volatile(
+	//"ld.f32 %0, [%1];\n\t" : "=f"(k) : "l"(&sm[0])
+	//);                                                                  
+
+	//k = sm[0];
+	k = sm[threadIdx.x];
+
+
 	end_time2 = clock();                                                        
 
 	__syncthreads();                                                            
@@ -165,25 +176,36 @@ __global__ void kernel_store_shared(float *my_array, uint *start_t, uint *end_t,
 
 	__syncthreads();                                                            
 
-	start_time1 = clock();                                                      
-	end_time1 = clock();                                                        
+	//start_time1 = clock();                                                      
+	//end_time1 = clock();                                                        
+
+	asm("mov.u32 %0, %%clock;" : "=r"(start_time1));
+	asm("mov.u32 %0, %%clock;" : "=r"(end_time1));
 
 	__syncthreads();                                                            
 
-	start_time2 = clock();                                                      
+	//start_time2 = clock();                                                      
+	asm("mov.u32 %0, %%clock;" : "=r"(start_time2));
+
 	//asm volatile (
 	//		"st.shared.f32  [%0], %1;\n\t" :: "l"(&sm[0]) , "f"(k)
 	//		);
-	asm volatile (
-			"st.f32  [%0], %1;\n\t" :: "l"(&sm[0]) , "f"(k)
-			);
 
-	end_time2 = clock();                                                        
+	//asm volatile (
+	//		"st.f32  [%0], %1;\n\t" :: "l"(&sm[0]) , "f"(k)
+	//		);
+
+	sm[threadIdx.x] = k;
+
+	//end_time2 = clock();                                                        
+	asm("mov.u32 %0, %%clock;" : "=r"(end_time2));
 
 	__syncthreads();                                                            
 
-	start_time3 = clock();                                                      
-	end_time3 = clock();                                                        
+	//start_time3 = clock();
+	//end_time3 = clock();
+	asm("mov.u32 %0, %%clock;" : "=r"(start_time3));
+	asm("mov.u32 %0, %%clock;" : "=r"(end_time3));
 
 	start_t[0] = start_time1;                                                   
 	start_t[1] = start_time2;                                                   
@@ -193,5 +215,5 @@ __global__ void kernel_store_shared(float *my_array, uint *start_t, uint *end_t,
 	end_t[1] = end_time2;                                                       
 	end_t[2] = end_time3;                                                       
 
-	my_array[0] += (float)k;
+	my_array[0] += sm[threadIdx.x]; 
 }

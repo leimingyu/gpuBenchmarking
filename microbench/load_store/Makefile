@@ -9,11 +9,18 @@ GCC ?= g++
 NVC = $(CUDA_DIR)/bin/nvcc  -ccbin $(GCC)
 
 NVCC_FLAGS   := 
+
 #NVCC_FLAGS   += --keep  
 #NVCC_FLAGS   += -cubin
-NVCC_FLAGS   += -Xcicc -O0 -Xptxas -O0 
+
+#NVCC_FLAGS   += -Xcicc -O0 -Xptxas -O0 
+NVCC_FLAGS   += -Xptxas -O0 
+
 #NVCC_FLAGS   += -O0
+#NVCC_FLAGS   += -O1
+
 NVCC_FLAGS   += -m${OS_TYPE}
+
 #NVCC_FLAGS   += -lineinfo 
 
 # Directories for Header Files 

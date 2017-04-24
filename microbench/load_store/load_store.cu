@@ -101,7 +101,8 @@ void load_shared()
 	cudaDeviceSynchronize();
 
 	uint bar1 = d_end[0] - d_start[0];  // 3 mov : including store the clock val
-	uint bar2 = d_end[1] - d_start[1];  // (2 mov clock) + 22 inst + ld_shared + (1mov clock)
+	// 22 (s2r/imull32i/mov/iadd) + lds.u.32 = 2 imul + lds.u.32 + 20 other inst
+	uint bar2 = d_end[1] - d_start[1];
 	uint bar3 = d_end[2] - d_start[2];  // 3 mov
 
 	printf("\n%s\n", test_name.c_str());
@@ -112,7 +113,8 @@ void load_shared()
 	assert(bar3 == 45);
 	uint mov_clk = bar1 / 3;
 
-	printf("ld.shared (an approximation): %u (clks)\n", bar2 - 25 * mov_clk);
+	// imul is 86 clocks on gtx 950
+	printf("LDS (load from shared memory) : %u (clks)\n", bar2 - 20 * mov_clk - 2 * 86);
 
 	cudaFree(d_a);
 	cudaFree(d_start);
@@ -215,7 +217,7 @@ void store_shared()
 	cudaDeviceSynchronize();
 
 	uint bar1 = d_end[0] - d_start[0];  // 3 mov : including store the clock val
-	uint bar2 = d_end[1] - d_start[1];  // (2 mov clock) + 21 mov + st.e + (1mov clock)
+	uint bar2 = d_end[1] - d_start[1];  // (2 mov clock) + 23 mov + STS + (1mov clock)
 	uint bar3 = d_end[2] - d_start[2];  // 3 mov
 
 	printf("\n%s\n", test_name.c_str());
@@ -226,7 +228,8 @@ void store_shared()
 	assert(bar3 == 45);
 	uint mov_clk = bar1 / 3;
 
-	printf("st.shared (an approximation): %u (clks)\n", bar2 - 24 * mov_clk);
+	// 2 imul + 21 others
+	printf("STS (store to shared memory): %u (clks)\n", bar2 - 21 * mov_clk - 2 * 86);
 
 	cudaFree(d_a);
 	cudaFree(d_start);
@@ -250,13 +253,13 @@ int main(int argc, char **argv) {
 	//------------------------------------------------------------------------//
 	// load
 	//------------------------------------------------------------------------//
-	load_global();
-	load_shared();
+	//load_global();
+	//load_shared();
 
 	//------------------------------------------------------------------------//
 	// store 
 	//------------------------------------------------------------------------//
-	store_global();
+	//store_global();
 	store_shared();
 
 	return 0;
