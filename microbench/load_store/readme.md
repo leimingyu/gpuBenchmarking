@@ -3,8 +3,8 @@
 * global_load  650 (cycles)
 * global_store  19 (cycles)
 
-* shared_load  71 (cycles)
-* shared_store  64 (cycles)
+* shared_load  26 (cycles)
+* shared_store  19 (cycles)
 
 * constant memory load  799 (cycles)
 * local memory load  360 (cycles)
@@ -100,11 +100,43 @@ CS2R R10, SR_CLOCKLO;         // 1 mov to recor clock
 3 mov + 23 inst ( 2 imul +  LDG + 2 iadd + 1 fadd + 17 others)
 
 
-### load from shared
+
+### global store
+```
+     /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+        /*01f0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
+        /*01f8*/                   MOV R12, R9;                     /* 0x5c9807800097000c */
+                                                                    /* 0x00643c03fde0190f */
+        /*0208*/                   S2R R9, SR_TID.X;                /* 0xf0c8000002170009 */
+        /*0210*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
+        /*0218*/                   IMUL32I.U32.U32 R10, R9, 0x4;    /* 0x1f0000000047090a */
+                                                                    /* 0x007fbc03fde0190f */
+        /*0228*/                   IMUL32I.U32.U32.HI R9, R9, 0x4;  /* 0x1f20000000470909 */
+        /*0230*/                   MOV R10, R10;                    /* 0x5c98078000a7000a */
+        /*0238*/                   MOV R13, R9;                     /* 0x5c9807800097000d */
+                                                                    /* 0x007fbc03fde01fef */
+        /*0248*/                   MOV R9, R2;                      /* 0x5c98078000270009 */
+        /*0250*/                   MOV R14, R3;                     /* 0x5c9807800037000e */
+        /*0258*/                   IADD R9.CC, R9, R10;             /* 0x5c10800000a70909 */
+                                                                    /* 0x007fbc03fde01fef */
+        /*0268*/                   IADD.X R10, R14, R13;            /* 0x5c10080000d70e0a */
+        /*0270*/                   MOV R14, R9;                     /* 0x5c9807800097000e */
+        /*0278*/                   MOV R15, R10;                    /* 0x5c98078000a7000f */
+                                                                    /* 0x0067bc03fde01fef */
+        /*0288*/                   MOV R14, R14;                    /* 0x5c98078000e7000e */
+        /*0290*/                   MOV R15, R15;                    /* 0x5c98078000f7000f */
+        /*0298*/                   STG.E [R14], R6;                 /* 0xeedc200000070e06 */
+                                                                    /* 0x007fbc03fde01fef */
+        /*02a8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+```
+
+
+
+### Shared (Load)
 
 For a benchmarched sass as below
 ```
-      /*01b8*/                   CS2R R9, SR_CLOCKLO;               /* 0x50c8000005070009 */
+        /*01b8*/                   CS2R R9, SR_CLOCKLO;               /* 0x50c8000005070009 */
                                                                       /* 0x00643c03fde01fef */
         /*01c8*/                   MOV R9, R9;                        /* 0x5c98078000970009 */
         /*01d0*/                   MOV R9, R9;                        /* 0x5c98078000970009 */
@@ -140,48 +172,16 @@ For a benchmarched sass as below
                                                                       /* 0x007fbc03fde01fef */
         /*02c8*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
         /*02d0*/                   CS2R R11, SR_CLOCKLO;              /* 0x50c800000507000b */
-```
-
-* (2 mov for start clock)
-* 22 (s2r/imull32i/mov/iadd) + lds.u.32 = 2 imul + lds.u.32 + 20 other inst
-* (1 mov for end clock)
-
-
-### global store
-```
-     /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
-        /*01f0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
-        /*01f8*/                   MOV R12, R9;                     /* 0x5c9807800097000c */
-                                                                    /* 0x00643c03fde0190f */
-        /*0208*/                   S2R R9, SR_TID.X;                /* 0xf0c8000002170009 */
-        /*0210*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
-        /*0218*/                   IMUL32I.U32.U32 R10, R9, 0x4;    /* 0x1f0000000047090a */
-                                                                    /* 0x007fbc03fde0190f */
-        /*0228*/                   IMUL32I.U32.U32.HI R9, R9, 0x4;  /* 0x1f20000000470909 */
-        /*0230*/                   MOV R10, R10;                    /* 0x5c98078000a7000a */
-        /*0238*/                   MOV R13, R9;                     /* 0x5c9807800097000d */
-                                                                    /* 0x007fbc03fde01fef */
-        /*0248*/                   MOV R9, R2;                      /* 0x5c98078000270009 */
-        /*0250*/                   MOV R14, R3;                     /* 0x5c9807800037000e */
-        /*0258*/                   IADD R9.CC, R9, R10;             /* 0x5c10800000a70909 */
-                                                                    /* 0x007fbc03fde01fef */
-        /*0268*/                   IADD.X R10, R14, R13;            /* 0x5c10080000d70e0a */
-        /*0270*/                   MOV R14, R9;                     /* 0x5c9807800097000e */
-        /*0278*/                   MOV R15, R10;                    /* 0x5c98078000a7000f */
-                                                                    /* 0x0067bc03fde01fef */
-        /*0288*/                   MOV R14, R14;                    /* 0x5c98078000e7000e */
-        /*0290*/                   MOV R15, R15;                    /* 0x5c98078000f7000f */
-        /*0298*/                   STG.E [R14], R6;                 /* 0xeedc200000070e06 */
-                                                                    /* 0x007fbc03fde01fef */
-        /*02a8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
-```
-
-
-
-### store to Shared Memory
 
 ```
-       /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
+
+
+
+
+### Shared Memory (store)
+
+```
+        /*01e8*/                   CS2R R9, SR_CLOCKLO;             /* 0x50c8000005070009 */
         /*01f0*/                   MOV R9, R9;                      /* 0x5c98078000970009 */
         /*01f8*/                   MOV R11, R9;                     /* 0x5c9807800097000b */
                                                                     /* 0x00643c03fde0190f */
@@ -218,8 +218,9 @@ For a benchmarched sass as below
         /*02f8*/                   MOV R9, R13;                     /* 0x5c98078000d70009 */
                                                                     /* 0x007fbc03fde01fef */
         /*0308*/                   CS2R R12, SR_CLOCKLO;            /* 0x50c800000507000c */
-
 ```
+2 mov + 24 (2 imul + STS + 21 others) + 1 mov
+
 
 
 ### Constant Memory (Read / Load)
