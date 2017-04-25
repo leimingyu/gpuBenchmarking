@@ -5,7 +5,7 @@
 
 __constant__ float constspace[128];
 
-_global__ void kernel_global_load(float *my_array, uint *start_t, uint *end_t, 
+__global__ void kernel_global_load(float *my_array, uint *start_t, uint *end_t, 
 		int arraylen, float a, float b)
 {
 	unsigned int start_time1;                                                   
@@ -326,6 +326,10 @@ __global__ void kernel_const_load(float *my_array, uint *start_t, uint *end_t,
  		int arraylen, float a, float b)
 {
  	unsigned int start_time1;                                                   
+ 	unsigned int start_time2;                                                   
+ 	unsigned int start_time3;                                                   
+
+ 	unsigned int end_time1;
  	unsigned int end_time2;                                                     
  	unsigned int end_time3;                                                     
  
