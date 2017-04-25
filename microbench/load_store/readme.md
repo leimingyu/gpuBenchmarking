@@ -55,6 +55,49 @@ CS2R R10, SR_CLOCKLO;         // 1 mov to recor clock
 3 mov (record clocks) + 25 (mov/lea/shf) + ld.e
 = 28 * 15 + ld.e = 420 + ld.e = load 1 float to register  
 
+### Global Load (v1)
+```
+        /*0168*/                   CS2R R10, SR_CLOCKLO;              /* 0x50c800000507000a */
+        /*0170*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+        /*0178*/                   MOV R10, R10;                      /* 0x5c98078000a7000a */
+                                                                      /* 0x00643c03fde0190f */
+        /*0188*/                   S2R R11, SR_TID.X;                 /* 0xf0c800000217000b */
+        /*0190*/                   MOV R11, R11;                      /* 0x5c98078000b7000b */
+        /*0198*/                   IMUL32I.U32.U32 R12, R11, 0x4;     /* 0x1f00000000470b0c */
+                                                                      /* 0x007fbc03fde0190f */
+        /*01a8*/                   IMUL32I.U32.U32.HI R11, R11, 0x4;  /* 0x1f20000000470b0b */
+        /*01b0*/                   MOV R12, R12;                      /* 0x5c98078000c7000c */
+        /*01b8*/                   MOV R13, R11;                      /* 0x5c98078000b7000d */
+                                                                      /* 0x007fbc03fde01fef */
+        /*01c8*/                   MOV R11, R2;                       /* 0x5c9807800027000b */
+        /*01d0*/                   MOV R14, R3;                       /* 0x5c9807800037000e */
+        /*01d8*/                   IADD R11.CC, R11, R12;             /* 0x5c10800000c70b0b */
+                                                                      /* 0x007fbc03fde01fef */
+        /*01e8*/                   IADD.X R12, R14, R13;              /* 0x5c10080000d70e0c */
+        /*01f0*/                   MOV R13, R12;                      /* 0x5c98078000c7000d */
+        /*01f8*/                   MOV R12, R11;                      /* 0x5c98078000b7000c */
+                                                                      /* 0x00643c03fde01fef */
+        /*0208*/                   MOV R12, R12;                      /* 0x5c98078000c7000c */
+        /*0210*/                   MOV R13, R13;                      /* 0x5c98078000d7000d */
+        /*0218*/                   LDG.E R11, [R12];                  /* 0xeed4200000070c0b */
+                                                                      /* 0x007fbc03fde01fef */
+        /*0228*/                   FADD R0, R11, R0;                  /* 0x5c58000000070b00 */
+        /*0230*/                   MOV R4, R4;                        /* 0x5c98078000470004 */
+        /*0238*/                   MOV R5, R5;                        /* 0x5c98078000570005 */
+                                                                      /* 0x007fbc03fde01fef */
+        /*0248*/                   MOV R0, R0;                        /* 0x5c98078000070000 */
+        /*0250*/                   MOV R4, R4;                        /* 0x5c98078000470004 */
+        /*0258*/                   MOV R5, R5;                        /* 0x5c98078000570005 */
+                                                                      /* 0x007fbc03fde01fef */
+        /*0268*/                   MOV R14, R4;                       /* 0x5c9807800047000e */
+        /*0270*/                   MOV R15, R5;                       /* 0x5c9807800057000f */
+        /*0278*/                   CS2R R4, SR_CLOCKLO;               /* 0x50c8000005070004 */
+
+```
+
+3 mov + 23 inst ( 2 imul +  LDG + 2 iadd + 1 fadd + 17 others)
+
+
 ### load from shared
 
 For a benchmarched sass as below
