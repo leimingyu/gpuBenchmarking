@@ -1,9 +1,11 @@
 # Results 
 ### GTX 950 (CUDA 8)
 * global_load  650 (cycles)
-* global_store  64 (cycles)
+* global_store  19 (cycles)
+
 * shared_load  71 (cycles)
 * shared_store  64 (cycles)
+
 * constant memory load  799 (cycles)
 * local memory load  360 (cycles)
 
