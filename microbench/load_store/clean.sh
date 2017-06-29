@@ -17,3 +17,5 @@ rm *.o
 rm *.module_id
 rm *.reg.c
 
+
+rm  sm35GlobalLoad 

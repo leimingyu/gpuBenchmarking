@@ -1,1 +1,1 @@
-cuobjdump -sass load_store > sass
+cuobjdump -sass sm35GlobalLoad > sass_sm35_GlobalLoad 

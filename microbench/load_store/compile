@@ -1,0 +1,2 @@
+rm -f sm35GlobalLoad
+make -f make_kepler_sm35
